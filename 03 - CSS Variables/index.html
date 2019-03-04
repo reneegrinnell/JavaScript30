@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scoped CSS Variables and JS</title>
+</head>
+<body>
+  <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
+
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <!-- data attributes have been created here - need data and dash beforehand, then whatever attr you've made up -->
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+
+    <label for="blur">Blur:</label>
+    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+
+    <label for="base">Base Color</label>
+    <input id="base" type="color" name="base" value="#ffc600">
+  </div>
+
+  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
+
+  <style>
+    /* CSS variables - declared on some sort of element (or, in this case, root - similar to html element. Setting defaults here */
+     :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    /* have defined variables here, now can use them */
+    img {
+      padding: var(--spacing);
+      /*taken from root spacing above, doesn't need to be re-declared here*/
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
+
+    /*
+      misc styles, nothing to do with CSS variables
+    */
+
+    body {
+      text-align: center;
+      background: #193549;
+      color: white;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 50px;
+    }
+
+    .controls {
+      margin-bottom: 50px;
+    }
+
+    input {
+      width: 100px;
+    }
+  </style>
+
+  <script>
+   const inputs = document.querySelectorAll('.controls input');
+  // selecting all inputs on the page with const inputs
+  // querySelector returns what looks like an array, but is actually a NODE LIST (does not have all the methods an array does - just a few, entries, for each, keys, values, etc.)
+  
+  function handleUpdate() {
+    // what is dataset? if we console.log it, we see it's an object that will contain all the data attributes from that specific element (just sizing here)
+    // console.log(this.dataset);
+
+    const suffix = this.dataset.sizing || "";
+    // sizing or nothing (not all elements have sizing attribute)
+    // console.log(suffix);
+    // //below, should log names when you mouse over - base, spacing, blur
+    // console.log(this.name);
+
+    //next we'll select entire doc (which is a root), then set a property of name/spacing/blur
+    // so, this.name gets set to this.value...still need to append suffix though (for pixels)
+    document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
+  }
+
+  // listen for a change event on each of the inputs
+  // loop over each input, with "clean" arrow fn. Listen for change event, when that's called, will call handleUpdate fn
+  // listening for change OR mousemove, calls handleUpdate regardless of which one happens
+  inputs.forEach(input => input.addEventListener('change', handleUpdate));
+
+  inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
+  
+  </script>
+
+</body>
+</html>
