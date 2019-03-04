@@ -7,10 +7,10 @@
 <body>
   <p><em>Psst: have a look at the JavaScript Console</em> 💁</p>
   <script>
-    // Get your shorts on - this is an array workout!
     // ## Array Cardio Day 1
 
-    // Some data we can work with
+    // Some data we can work with to practice array methods - working with filter, map, sort, reduce will really improve your JS abilities!
+    // "Gateway drug" to functional programming
 
     const inventors = [
       { first: 'Albert', last: 'Einstein', year: 1879, passed: 1955 },
@@ -30,22 +30,130 @@
     const people = ['Beck, Glenn', 'Becker, Carl', 'Beckett, Samuel', 'Beddoes, Mick', 'Beecher, Henry', 'Beethoven, Ludwig', 'Begin, Menachem', 'Belloc, Hilaire', 'Bellow, Saul', 'Benchley, Robert', 'Benenson, Peter', 'Ben-Gurion, David', 'Benjamin, Walter', 'Benn, Tony', 'Bennington, Chester', 'Benson, Leana', 'Bent, Silas', 'Bentsen, Lloyd', 'Berger, Ric', 'Bergman, Ingmar', 'Berio, Luciano', 'Berle, Milton', 'Berlin, Irving', 'Berne, Eric', 'Bernhard, Sandra', 'Berra, Yogi', 'Berry, Halle', 'Berry, Wendell', 'Bethea, Erin', 'Bevan, Aneurin', 'Bevel, Ken', 'Biden, Joseph', 'Bierce, Ambrose', 'Biko, Steve', 'Billings, Josh', 'Biondo, Frank', 'Birrell, Augustine', 'Black, Elk', 'Blair, Robert', 'Blair, Tony', 'Blake, William'];
 
     // Array.prototype.filter()
-    // 1. Filter the list of inventors for those who were born in the 1500's
+    // 1. Filtering over the list of inventors for those who were born in the 1500s
+    // HOW A FILTER WORKS: you pass it a function, the fn loops over every single item in your array, gives us the inventor
+    
+    // 1.1 
+    // const fifteen = inventors.filter(function(inventor) {
+    //   if(inventor.year >= 1500 && inventor.year <= 1599) {
+    //     return true; //keep this inventor
+    //   }
+    // });
+
+    // // neat alternative to console.log, returns results as a table
+    // console.table(fifteen);
+
+    // 1.2 DRYing up/using ES6
+    // const fifteen = inventors.filter(inventor => {
+    //   if(inventor.year >= 1500 && inventor.year <= 1599) {
+    //     return true; //keep this inventor
+    //   }
+    // });
+
+    // 1.3 further DRYing up by doing everything inline, return a boolean of true if two conditions met
+    const fifteen = inventors.filter(inventor => (inventor.year >= 1500 && inventor.year <= 1599))
+
+    console.table(fifteen);
 
     // Array.prototype.map()
+    // Map takes in an array, returns a new array of the same length - think of it as a "factory machine" that takes in a raw material, stamps it, gives output
+    // Vs filter, where you can take in 10 things and return 2, map will always return 10 if it takes in 10
+
     // 2. Give us an array of the inventors' first and last names
+    // can either concatenate in a space or return backticks/template strings to add spaces between first, last names
+    const fullNames = inventors.map(inventor => `${inventor.first} ${inventor.last}`);
+    console.log(fullNames);
 
     // Array.prototype.sort()
+    // With sort, you get two items and you're asked to sort just 2 items (return 1 and -1, bubbles these items up and down in the array)
     // 3. Sort the inventors by birthdate, oldest to youngest
+    // can also use just a and b in the fn here, I left first and second person for ease of understanding
+    // const ageOrder = inventors.sort(function(firstPerson, secondPerson) {
+    //   if (firstPerson.year > secondPerson.year) {
+    //     return 1;
+    //   } else {
+    //     return -1;
+    //   }
+    // });
 
-    // Array.prototype.reduce()
+    //DRY IT UP: the ternary operator as a shorthand if/else statement
+    // https://www.thoughtco.com/javascript-by-example-use-of-the-ternary-operator-2037394
+    const ageOrder = inventors.sort((a, b) => a.year > b.year ? 1 : -1);
+
+    console.table(ageOrder);
+
+    // Array.prototype.reduce() - vs sort and map, which just take items in, reduce allows you to build on every single item
     // 4. How many years did all the inventors live?
+    
+    // via "the ole for loop"
+    // var totalYears = 0;
 
-    // 5. Sort the inventors by years lived
+    // for (var i = 0; i < inventors.length; i++) {
+    //   totalYears += inventors[i].year
+    // }
+
+    // NEW WAY!
+    // reduce gives you running total / what you've returned from this function last time
+    // the below will give a weird result because the first time through we don't have a total (it's undefined)
+    // const totalYears = inventors.reduce((total, inventor) => {
+    //   return total + (inventor.passed - inventor.year);
+    // });
+
+    // the fix: 
+    const totalYears = inventors.reduce((total, inventor) => {
+      return total + (inventor.passed - inventor.year);
+    }, 0);
+
+    console.log(totalYears);
+
+    // // 5. Sort the inventors by years lived
+    //how I did it at first:
+    // const yearsLived = inventors.sort(function(a, b) {
+    //   if ((a.passed - a.year) > (b.passed - b.year)) {
+    //     return 1;
+    //   } else {
+    //     return -1;
+    //   }
+    // });
+
+    // console.log(yearsLived);
+
+    // //how Wes did it at first:
+    // const oldest = inventors.sort(function(a, b) {
+    //   const lastGuy = a.passed - a.year;
+    //   const nextGuy = b.passed - b.year;
+
+    //   if(lastGuy > nextGuy) {
+    //     return 1;
+    //   } else {
+    //     return -1;
+    //   }
+    // });
+
+    //DRYing up with ternary operator:
+    const oldest = inventors.sort(function(a, b) {
+      const lastGuy = a.passed - a.year;
+      const nextGuy = b.passed - b.year;
+      return lastGuy > nextGuy ? 1 : -1;
+    });
+
+    console.table(oldest);
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
     // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
 
+    // 6.1 need to get the DOM elements out of the page - inspect and find that the div of class .mw-category contains all the info we need
+    const category = document.querySelector('.mw-category');
+    // you can call querySelector on any existing DOM element (doesn't always have to be document)
+    // const links = category.querySelectorAll('a');
+
+    // the above returns just a node list, need to change to an array
+    // two ways to accomplish this: 1. wrap the entire thing in array.from(), or 2. create an array and use ES6 spread to get every single item into the array
+    const links = Array.from(category.querySelectorAll('a'));
+    const de = links
+      .map(link => link.textContent)
+      .filter(streetName => streetName.includes('de'));
+      // filter street names to only return if street name includes "de"
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
